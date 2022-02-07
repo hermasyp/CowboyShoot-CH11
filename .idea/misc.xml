@@ -4,9 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Work Project/Binar/Android Wave 11/Chapter 4/Example/CowboyShoot/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.36512820512820515" />
+        <entry key="..\:/Work Project/Binar/Android Wave 11/Chapter 4/Example/CowboyShoot/app/src/main/res/drawable/bg_rounded_white_rad_16.xml" value="0.18" />
         <entry key="..\:/Work Project/Binar/Android Wave 11/Chapter 4/Example/CowboyShoot/app/src/main/res/font/pixelated_font.xml" value="0.378974358974359" />
         <entry key="..\:/Work Project/Binar/Android Wave 11/Chapter 4/Example/CowboyShoot/app/src/main/res/layout/activity_game.xml" value="0.3546875" />
         <entry key="..\:/Work Project/Binar/Android Wave 11/Chapter 4/Example/CowboyShoot/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Work Project/Binar/Android Wave 11/Chapter 4/Example/CowboyShoot/app/src/main/res/layout/activity_splash.xml" value="0.340625" />
+        <entry key="..\:/Work Project/Binar/Android Wave 11/Chapter 4/Example/CowboyShoot/app/src/main/res/layout/fragment_input_name.xml" value="0.3546875" />
         <entry key="..\:/Work Project/Binar/Android Wave 11/Chapter 4/Example/CowboyShoot/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.37083333333333335" />
       </map>
     </option>

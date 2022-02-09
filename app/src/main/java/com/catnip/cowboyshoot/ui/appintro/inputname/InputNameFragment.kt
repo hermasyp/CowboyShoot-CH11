@@ -1,5 +1,6 @@
 package com.catnip.cowboyshoot.ui.appintro.inputname
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment
 import com.catnip.cowboyshoot.R
 import com.catnip.cowboyshoot.databinding.FragmentInputNameBinding
 import com.catnip.cowboyshoot.preference.UserPreference
+import com.catnip.cowboyshoot.ui.menu.MenuGameActivity
 import com.google.android.material.snackbar.Snackbar
 
 class InputNameFragment : Fragment() {
@@ -39,10 +41,12 @@ class InputNameFragment : Fragment() {
         }
     }
 
-    public fun navigateToMenuGame() {
+    fun navigateToMenuGame() {
         if (isNameFilled()) {
             userPreference?.name = binding.etPlayerName.text.toString().trim()
-            Toast.makeText(context, userPreference?.name, Toast.LENGTH_SHORT).show()
+            val intent = Intent(context,MenuGameActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
         }
     }
 

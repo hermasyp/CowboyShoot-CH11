@@ -1,12 +1,16 @@
 package com.catnip.cowboyshoot.ui.game
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.catnip.cowboyshoot.R
 import com.catnip.cowboyshoot.databinding.ActivityGameBinding
 import com.catnip.cowboyshoot.enum.CharacterPosition
@@ -23,13 +27,40 @@ class GameActivity : AppCompatActivity() {
     private var computerPosition: Int = CharacterPosition.MIDDLE.ordinal
     private var isGameFinished: Boolean = false
 
+    private var gamePlayMode: Int = GAMEPLAY_MODE_VS_COMPUTER
+    private var playTurn : CharacterSide = CharacterSide.PLAYER
+
+    companion object {
+        private const val EXTRAS_GAME_MODE = "EXTRAS_GAME_MODE"
+        const val GAMEPLAY_MODE_VS_COMPUTER = 0
+        const val GAMEPLAY_MODE_VS_PLAYER = 1
+
+        fun startActivity(context: Context, gameplayMode: Int) {
+            val intent = Intent(context, GameActivity::class.java)
+            intent.putExtra(EXTRAS_GAME_MODE, gameplayMode)
+            context.startActivity(intent)
+        }
+    }
+
+    private fun getIntentData() {
+        gamePlayMode = intent.extras?.getInt(EXTRAS_GAME_MODE, 0) ?: 0
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bindViews()
+        getIntentData()
         setInitialState()
         setClickListeners()
 
+    }
+
+    private fun showUIPlayer(characterSide: CharacterSide,isVisible : Boolean){
+        if(characterSide == CharacterSide.PLAYER){
+            binding.llPlayerLeft.isVisible = isVisible
+        }else{
+            binding.llPlayerRight.isVisible = isVisible
+        }
     }
 
     private fun bindViews() {
@@ -43,10 +74,20 @@ class GameActivity : AppCompatActivity() {
         setCharacterMovement(playerPosition, CharacterSide.PLAYER, CharacterShootState.IDLE)
 
         //set position computer for idle
-        setCharacterMovement(computerPosition, CharacterSide.COMPUTER, CharacterShootState.IDLE)
+        setCharacterMovement(computerPosition, CharacterSide.ENEMY, CharacterShootState.IDLE)
 
-        //set text for button fire
-        binding.tvStatusGame.text = getString(R.string.text_button_fire)
+        //checking game mode when init state
+        if(gamePlayMode == GAMEPLAY_MODE_VS_PLAYER){
+            Toast.makeText(this, getString(R.string.text_toast_player_1_turn), Toast.LENGTH_SHORT).show()
+            showUIPlayer(CharacterSide.PLAYER,true)
+            showUIPlayer(CharacterSide.ENEMY,false)
+            //show lock Player 1
+            binding.tvStatusGame.text = getString(R.string.text_lock_player_1)
+        }else{
+            //set text for button fire
+            binding.tvStatusGame.text = getString(R.string.text_button_fire)
+        }
+
     }
 
     private fun setClickListeners() {
@@ -67,7 +108,27 @@ class GameActivity : AppCompatActivity() {
             if (isGameFinished) {
                 resetGame()
             } else {
-                startGame()
+                //starting the game
+                if(gamePlayMode == GAMEPLAY_MODE_VS_PLAYER){
+                    //vs player
+                    //first condition when player lock the position
+                    //after that, we change the turn to Enemy
+                    if(playTurn == CharacterSide.PLAYER){
+                        //change the turn
+                        playTurn = CharacterSide.ENEMY
+                        //hide who should be visible
+                        showUIPlayer(CharacterSide.PLAYER,false)
+                        showUIPlayer(CharacterSide.ENEMY,true)
+                        //set text to fire
+                        binding.tvStatusGame.text = getString(R.string.text_button_fire)
+                    }else{
+                        //if both player already lock their position, then we can start the game
+                        startGame()
+                    }
+                }else{
+                    //vs computer, we can just start the game
+                    startGame()
+                }
             }
         }
     }
@@ -77,7 +138,7 @@ class GameActivity : AppCompatActivity() {
         computerPosition = Random.nextInt(0, 3)
         //set character movement to shoot
         setCharacterMovement(playerPosition, CharacterSide.PLAYER, CharacterShootState.SHOOT)
-        setCharacterMovement(computerPosition, CharacterSide.COMPUTER, CharacterShootState.SHOOT)
+        setCharacterMovement(computerPosition, CharacterSide.ENEMY, CharacterShootState.SHOOT)
         // proceed winner
         if (playerPosition == computerPosition) {
             //PLAYER LOSE
@@ -85,7 +146,7 @@ class GameActivity : AppCompatActivity() {
             setCharacterMovement(playerPosition, CharacterSide.PLAYER, CharacterShootState.DEAD)
             setCharacterMovement(
                 computerPosition,
-                CharacterSide.COMPUTER,
+                CharacterSide.ENEMY,
                 CharacterShootState.SHOOT
             )
             binding.tvWinnerGame.text = getString(R.string.text_player_lose)
@@ -93,7 +154,7 @@ class GameActivity : AppCompatActivity() {
             //PLAYER WIN
             Log.d(TAG, "startGame: Player Wins")
             setCharacterMovement(playerPosition, CharacterSide.PLAYER, CharacterShootState.SHOOT)
-            setCharacterMovement(computerPosition, CharacterSide.COMPUTER, CharacterShootState.DEAD)
+            setCharacterMovement(computerPosition, CharacterSide.ENEMY, CharacterShootState.DEAD)
             binding.tvWinnerGame.text = getString(R.string.text_player_win)
         }
         isGameFinished = true

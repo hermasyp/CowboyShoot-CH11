@@ -16,4 +16,6 @@
     <string name="player_vs_computer">Player vs Computer</string>
     <string name="player_vs_player">Player vs Player</string>
     <string name="placeholder_title_menu_game">Hi %s ! \n Which one do you want to play ?</string>
+    <string name="text_toast_player_1_turn">Player 1 Turn</string>
+    <string name="text_lock_player_1">LOCK PLAYER 1</string>
 </resources>

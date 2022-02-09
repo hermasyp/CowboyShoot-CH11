@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.catnip.cowboyshoot.R
 import com.catnip.cowboyshoot.databinding.ActivityMenuGameBinding
 import com.catnip.cowboyshoot.preference.UserPreference
+import com.catnip.cowboyshoot.ui.game.GameActivity
 
 class MenuGameActivity : AppCompatActivity() {
 
@@ -21,10 +22,10 @@ class MenuGameActivity : AppCompatActivity() {
 
     private fun setMenuClickListeners() {
         binding.ivMenuVsComputer.setOnClickListener {
-            //todo : navigate to game, menu vs computer
+            GameActivity.startActivity(this,GameActivity.GAMEPLAY_MODE_VS_COMPUTER)
         }
         binding.ivMenuVsPlayer.setOnClickListener {
-            //todo : navigate to game, menu vs player
+            GameActivity.startActivity(this,GameActivity.GAMEPLAY_MODE_VS_PLAYER)
         }
     }
 

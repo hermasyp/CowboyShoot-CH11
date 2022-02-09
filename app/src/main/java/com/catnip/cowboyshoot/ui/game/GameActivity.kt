@@ -24,7 +24,7 @@ class GameActivity : AppCompatActivity() {
     private lateinit var binding: ActivityGameBinding
 
     private var playerPosition: Int = CharacterPosition.MIDDLE.ordinal
-    private var computerPosition: Int = CharacterPosition.MIDDLE.ordinal
+    private var enemyPosition: Int = CharacterPosition.MIDDLE.ordinal
     private var isGameFinished: Boolean = false
 
     private var gamePlayMode: Int = GAMEPLAY_MODE_VS_COMPUTER
@@ -74,7 +74,7 @@ class GameActivity : AppCompatActivity() {
         setCharacterMovement(playerPosition, CharacterSide.PLAYER, CharacterShootState.IDLE)
 
         //set position computer for idle
-        setCharacterMovement(computerPosition, CharacterSide.ENEMY, CharacterShootState.IDLE)
+        setCharacterMovement(enemyPosition, CharacterSide.ENEMY, CharacterShootState.IDLE)
 
         //checking game mode when init state
         if(gamePlayMode == GAMEPLAY_MODE_VS_PLAYER){
@@ -92,15 +92,29 @@ class GameActivity : AppCompatActivity() {
 
     private fun setClickListeners() {
         binding.ivArrowUp.setOnClickListener {
-            if (!isGameFinished && playerPosition > CharacterPosition.TOP.ordinal) {
-                playerPosition--
-                setCharacterMovement(playerPosition, CharacterSide.PLAYER, CharacterShootState.IDLE)
+            if(playTurn == CharacterSide.PLAYER){
+                if (!isGameFinished && playerPosition > CharacterPosition.TOP.ordinal) {
+                    playerPosition--
+                    setCharacterMovement(playerPosition, CharacterSide.PLAYER, CharacterShootState.IDLE)
+                }
+            }else{
+                if (!isGameFinished && enemyPosition > CharacterPosition.TOP.ordinal) {
+                    enemyPosition--
+                    setCharacterMovement(enemyPosition, CharacterSide.ENEMY, CharacterShootState.IDLE)
+                }
             }
         }
         binding.ivArrowDown.setOnClickListener {
-            if (!isGameFinished && playerPosition < CharacterPosition.BOTTOM.ordinal) {
-                playerPosition++
-                setCharacterMovement(playerPosition, CharacterSide.PLAYER, CharacterShootState.IDLE)
+            if(playTurn == CharacterSide.PLAYER){
+                if (!isGameFinished && playerPosition < CharacterPosition.BOTTOM.ordinal) {
+                    playerPosition++
+                    setCharacterMovement(playerPosition, CharacterSide.PLAYER, CharacterShootState.IDLE)
+                }
+            }else{
+                if (!isGameFinished && enemyPosition < CharacterPosition.BOTTOM.ordinal) {
+                    enemyPosition++
+                    setCharacterMovement(enemyPosition, CharacterSide.ENEMY, CharacterShootState.IDLE)
+                }
             }
         }
 
@@ -134,18 +148,23 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun startGame() {
-        //set random pos for computer
-        computerPosition = Random.nextInt(0, 3)
+        //show all ui player
+        showUIPlayer(CharacterSide.PLAYER,true)
+        showUIPlayer(CharacterSide.ENEMY,true)
+        if(gamePlayMode == GAMEPLAY_MODE_VS_COMPUTER){
+            //set random pos for computer
+            enemyPosition = Random.nextInt(0, 3)
+        }
         //set character movement to shoot
         setCharacterMovement(playerPosition, CharacterSide.PLAYER, CharacterShootState.SHOOT)
-        setCharacterMovement(computerPosition, CharacterSide.ENEMY, CharacterShootState.SHOOT)
+        setCharacterMovement(enemyPosition, CharacterSide.ENEMY, CharacterShootState.SHOOT)
         // proceed winner
-        if (playerPosition == computerPosition) {
+        if (playerPosition == enemyPosition) {
             //PLAYER LOSE
             Log.d(TAG, "startGame: Player Lose")
             setCharacterMovement(playerPosition, CharacterSide.PLAYER, CharacterShootState.DEAD)
             setCharacterMovement(
-                computerPosition,
+                enemyPosition,
                 CharacterSide.ENEMY,
                 CharacterShootState.SHOOT
             )
@@ -154,7 +173,7 @@ class GameActivity : AppCompatActivity() {
             //PLAYER WIN
             Log.d(TAG, "startGame: Player Wins")
             setCharacterMovement(playerPosition, CharacterSide.PLAYER, CharacterShootState.SHOOT)
-            setCharacterMovement(computerPosition, CharacterSide.ENEMY, CharacterShootState.DEAD)
+            setCharacterMovement(enemyPosition, CharacterSide.ENEMY, CharacterShootState.DEAD)
             binding.tvWinnerGame.text = getString(R.string.text_player_win)
         }
         isGameFinished = true
@@ -164,8 +183,9 @@ class GameActivity : AppCompatActivity() {
     private fun resetGame() {
         Log.d(TAG, "resetGame: $isGameFinished")
         isGameFinished = false
+        playTurn = CharacterSide.PLAYER
         playerPosition = CharacterPosition.MIDDLE.ordinal
-        computerPosition = CharacterPosition.MIDDLE.ordinal
+        enemyPosition = CharacterPosition.MIDDLE.ordinal
         binding.tvWinnerGame.text = ""
         setInitialState()
         Log.d(TAG, "resetGame: $isGameFinished")

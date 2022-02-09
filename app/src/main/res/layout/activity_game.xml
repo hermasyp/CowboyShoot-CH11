@@ -35,6 +35,7 @@
     <TextView
         android:id="@+id/tv_status_game"
         style="@style/Text.32.Black"
+        android:textSize="@dimen/_28ssp"
         android:layout_width="0dp"
         android:layout_height="@dimen/_60sdp"
         android:layout_marginStart="@dimen/_8sdp"
